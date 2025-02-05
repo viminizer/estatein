@@ -3,7 +3,7 @@ import { ObjectId } from "mongoose";
 import { NoticeCategory } from "../../enums/notice.enum";
 
 @InputType()
-export class Notice {
+export class NoticeInput {
   @Field(() => NoticeCategory)
   noticeCategory: NoticeCategory;
 

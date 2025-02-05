@@ -31,9 +31,9 @@ export class Notice {
 }
 
 @ObjectType()
-export class Comments {
-  @Field(() => [Comment])
-  list: Comment[];
+export class Notices {
+  @Field(() => [Notice])
+  list: Notice[];
 
   @Field(() => [TotalCounter], { nullable: true })
   metaCounter: TotalCounter[];
