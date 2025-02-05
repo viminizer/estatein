@@ -50,5 +50,20 @@ export class NotificationService {
     }
   }
 
-  public async updateNotification(input: ObjectId): Promise<void> { }
+  public async updateNotification(
+    memberId: ObjectId,
+    notificationId: ObjectId,
+  ): Promise<Notification> {
+    const result = await this.notificatinoModel
+      .findOneAndUpdate(
+        { _id: notificationId, receiverId: memberId },
+        { notificationStatus: NotificationStatus.READ },
+        { new: true },
+      )
+      .exec();
+
+    if (!result) throw new Error(Message.UPDATE_FAILED);
+
+    return result;
+  }
 }
