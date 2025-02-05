@@ -1,60 +1,63 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { BoardArticleCategory, BoardArticleStatus } from '../../enums/board-article.enum';
-import { ObjectId } from 'mongoose';
-import { Member, TotalCounter } from '../member/member';
-import { MeLiked } from '../like/like';
+import { Field, Int, ObjectType } from "@nestjs/graphql";
+import {
+  BoardArticleCategory,
+  BoardArticleStatus,
+} from "../../enums/board-article.enum";
+import { ObjectId } from "mongoose";
+import { Member, TotalCounter } from "../member/member";
+import { MeLiked } from "../like/like";
 
 @ObjectType()
 export class BoardArticle {
-	@Field(() => String)
-	_id: ObjectId;
+  @Field(() => String)
+  _id: ObjectId;
 
-	@Field(() => BoardArticleCategory)
-	articleCategory: BoardArticleCategory;
+  @Field(() => BoardArticleCategory)
+  articleCategory: BoardArticleCategory;
 
-	@Field(() => BoardArticleStatus)
-	articleStatus: BoardArticleStatus;
+  @Field(() => BoardArticleStatus)
+  articleStatus: BoardArticleStatus;
 
-	@Field(() => String)
-	articleTitle: string;
+  @Field(() => String)
+  articleTitle: string;
 
-	@Field(() => String)
-	articleContent: string;
+  @Field(() => String)
+  articleContent: string;
 
-	@Field(() => String, { nullable: true })
-	articleImage?: string;
+  @Field(() => String, { nullable: true })
+  articleImage?: string;
 
-	@Field(() => Int)
-	articleViews: number;
+  @Field(() => Int)
+  articleViews: number;
 
-	@Field(() => Int)
-	articleLikes: number;
+  @Field(() => Int)
+  articleLikes: number;
 
-	@Field(() => Int)
-	articleComments: number;
+  @Field(() => Int)
+  articleComments: number;
 
-	@Field(() => String)
-	memberId: ObjectId;
+  @Field(() => String)
+  memberId: ObjectId;
 
-	@Field(() => Date)
-	createdAt: Date;
+  @Field(() => Date)
+  createdAt: Date;
 
-	@Field(() => Date)
-	updatedAt: Date;
+  @Field(() => Date)
+  updatedAt: Date;
 
-	/**From Aggregation */
-	@Field(() => [MeLiked], { nullable: true })
-	meLiked?: MeLiked[];
+  /**From Aggregation */
+  @Field(() => [MeLiked], { nullable: true })
+  meLiked?: MeLiked[];
 
-	@Field(() => Member, { nullable: true })
-	memberData?: Member;
+  @Field(() => Member, { nullable: true })
+  memberData?: Member;
 }
 
 @ObjectType()
 export class BoardArticles {
-	@Field(() => [BoardArticle])
-	list: BoardArticle[];
+  @Field(() => [BoardArticle])
+  list: BoardArticle[];
 
-	@Field(() => [TotalCounter], { nullable: true })
-	metaCounter: TotalCounter[];
+  @Field(() => [TotalCounter], { nullable: true })
+  metaCounter: TotalCounter[];
 }
