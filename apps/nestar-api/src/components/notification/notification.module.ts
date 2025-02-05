@@ -13,5 +13,6 @@ import { AuthModule } from "../auth/auth.module";
     AuthModule,
   ],
   providers: [NotificationResolver, NotificationService],
+  exports: [NotificationService],
 })
 export class NotificationModule { }

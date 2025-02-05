@@ -18,5 +18,4 @@ export class NotificationResolver {
     console.log("Query: getNotifications");
     return await this.notificationService.getNotifications(memberId);
   }
-
 }

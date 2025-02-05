@@ -7,6 +7,8 @@ import { T } from "../../libs/types/common";
 import { Model, ObjectId } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Message } from "../../libs/enums/common.enum";
+import { NotificationInput } from "../../libs/dto/notification/notification.input";
+import { NotificationStatus } from "../../libs/enums/notification.enum";
 
 @Injectable()
 export class NotificationService {
@@ -16,7 +18,10 @@ export class NotificationService {
   ) { }
 
   public async getNotifications(memberId: ObjectId): Promise<Notifications> {
-    const match: T = { memberId: memberId };
+    const match: T = {
+      receiverId: memberId,
+      notificationStatus: NotificationStatus.WAIT,
+    };
     const sort: T = { createdAt: -1 };
     const result: Notifications[] = await this.notificatinoModel
       .aggregate([
@@ -36,10 +41,14 @@ export class NotificationService {
     return result[0];
   }
 
-  public async createNotification(
-    memberId: ObjectId,
-    receiverId: ObjectId,
-  ): Promise<void> { 
-
+  public async createNotification(input: NotificationInput): Promise<void> {
+    try {
+      await this.notificatinoModel.create(input);
+    } catch (err: any) {
+      console.log("Notification Service Error: createNotification", err);
+      throw new InternalServerErrorException(Message.CREATE_FAILED);
+    }
   }
+
+  public async updateNotification(input: ObjectId): Promise<void> { }
 }
