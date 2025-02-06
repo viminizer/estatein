@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { NoticeService } from "./notice.service";
 import { Notice, Notices } from "../../libs/dto/notice/notice";
 import { MemberType } from "../../libs/enums/member.enum";
@@ -25,7 +25,7 @@ export class NoticeResolver {
   }
 
   @UseGuards(WithoutGuard)
-  @Mutation(() => Notices)
+  @Query(() => Notices)
   public async getNotices(
     @AuthMember("_id") memberId: ObjectId,
   ): Promise<Notices> {

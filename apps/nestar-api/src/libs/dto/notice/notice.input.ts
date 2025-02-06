@@ -7,12 +7,18 @@ export class NoticeInput {
   @Field(() => NoticeCategory)
   noticeCategory: NoticeCategory;
 
-  @Field(() => String)
-  noticeTitle: string;
+  @Field(() => String, { nullable: true })
+  noticeTitle?: string;
 
-  @Field(() => String)
-  noticeContent: string;
+  @Field(() => String, { nullable: true })
+  noticeContent?: string;
 
-  @Field(() => String)
-  memberId: ObjectId;
+  @Field(() => String, { nullable: true })
+  subject?: string;
+
+  @Field(() => String, { nullable: true })
+  content?: string;
+
+  @Field(() => String, { nullable: true })
+  memberId?: ObjectId;
 }

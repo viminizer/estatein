@@ -22,6 +22,7 @@ export class NoticeService {
     input: NoticeInput,
   ): Promise<Notice> {
     try {
+      input.memberId = memberId;
       const result = await this.noticeModel.create(input);
       return result;
     } catch (err: any) {
