@@ -31,6 +31,11 @@ const NoticeSchema = new Schema(
       type: String,
     },
 
+    event: {
+      type: Boolean,
+      default: true,
+    },
+
     memberId: {
       type: Schema.Types.ObjectId,
       required: true,

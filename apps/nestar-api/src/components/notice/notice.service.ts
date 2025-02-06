@@ -8,7 +8,7 @@ import { Notice, Notices } from "../../libs/dto/notice/notice";
 import { Model, ObjectId } from "mongoose";
 import { NoticeInput } from "../../libs/dto/notice/notice.input";
 import { Message } from "../../libs/enums/common.enum";
-import { NoticeStatus } from "../../libs/enums/notice.enum";
+import { NoticeCategory, NoticeStatus } from "../../libs/enums/notice.enum";
 import { T } from "../../libs/types/common";
 
 @Injectable()
@@ -23,6 +23,7 @@ export class NoticeService {
   ): Promise<Notice> {
     try {
       input.memberId = memberId;
+      input.event = true;
       const result = await this.noticeModel.create(input);
       return result;
     } catch (err: any) {
@@ -34,6 +35,7 @@ export class NoticeService {
   public async getNotices(memberId: ObjectId): Promise<Notices> {
     const match: T = {
       noticeStatus: NoticeStatus.ACTIVE,
+      noticeCategory: NoticeCategory.NOTICE,
     };
     const sort: T = {
       createdAt: -1,

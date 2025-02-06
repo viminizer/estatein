@@ -29,6 +29,9 @@ export class Notice {
   @Field(() => String, { nullable: true })
   content?: string;
 
+  @Field(() => Boolean, { nullable: true })
+  event?: boolean;
+
   @Field(() => Date)
   createdAt: Date;
 

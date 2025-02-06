@@ -21,4 +21,7 @@ export class NoticeInput {
 
   @Field(() => String, { nullable: true })
   memberId?: ObjectId;
+
+  @Field(() => Boolean, { nullable: true })
+  event?: boolean;
 }
