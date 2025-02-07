@@ -1,0 +1,48 @@
+version: "3.3"
+
+services:
+  estatein-api:
+    container_name: estatein-api
+    restart: always
+    image: node:20.10.0
+    ports:
+      - 4001:3004
+    volumes:
+      - ./:/usr/src/estatein
+    working_dir: /usr/src/estatein
+
+    networks:
+      - monorepo-network
+
+    #production
+    command: bash -c "npm install && npm run build && npm run start:prod"
+
+    # for dev
+    # command: bash -c "npm install && npm run start:dev"
+
+  estatein-batch:
+    container_name: estatein-batch
+    restart: unless-stopped
+    image: node:20.10.0
+    ports:
+      - 4002:3005
+    volumes:
+      - ./:/usr/src/estatein
+    working_dir: /usr/src/estatein
+
+    networks:
+      - monorepo-network
+
+    #production
+    command: bash -c "npm install && npm run build && npm run start:prod:batch"
+
+    # for dev
+    # command: bash -c "npm install && npm run start:dev"
+
+networks:
+  monorepo-network:
+    driver: bridge
+# estatein-front: localhost: 4000
+#
+# estatein-back: localhost: 4001
+# estatein-batch: localhost: 4002
