@@ -14,7 +14,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod:win": "set NODE_ENV=production&& node dist/apps/estatein-api/main",
     "start:prod": "NODE_ENV=production node dist/apps/estatein-api/main",
-    "start:prod:batch": "node dist/apps/estatein-batch/main",
+    "start:prod:batch": "NODE_ENV=production node dist/apps/estatein-batch/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",

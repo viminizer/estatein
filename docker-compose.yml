@@ -1,5 +1,3 @@
-version: "3.3"
-
 services:
   estatein-api:
     container_name: estatein-api
