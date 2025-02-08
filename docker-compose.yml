@@ -13,7 +13,7 @@ services:
       - monorepo-network
 
     #production
-    command: bash -c "npm install && npm run build && npm run start:prod"
+    command: bash -c "rm -rm dist && npm install && npm run build && npm run start:prod"
 
     # for dev
     # command: bash -c "npm install && npm run start:dev"
