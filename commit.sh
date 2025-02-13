@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "Committing..."
 git checkout develop
 git merge master
 git add .
