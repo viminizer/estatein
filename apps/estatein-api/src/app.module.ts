@@ -9,6 +9,7 @@ import { ComponentsModule } from "./components/components.module";
 import { DatabaseModule } from "./database/database.module";
 import { T } from "./libs/types/common";
 import { SocketModule } from "./socket/socket.module";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { SocketModule } from "./socket/socket.module";
         return graphQLFormattedError;
       },
     }),
+    EventEmitterModule.forRoot(),
     ComponentsModule,
     DatabaseModule,
     SocketModule,

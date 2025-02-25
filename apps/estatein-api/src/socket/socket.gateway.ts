@@ -1,10 +1,21 @@
-import { Logger } from '@nestjs/common';
-import { OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'ws';
-import * as WebSocket from 'ws';
-import { AuthService } from '../components/auth/auth.service';
-import { Member } from '../libs/dto/member/member';
-import * as url from 'url';
+import { Logger } from "@nestjs/common";
+import {
+  OnGatewayInit,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from "@nestjs/websockets";
+import { Server } from "ws";
+import * as WebSocket from "ws";
+import { AuthService } from "../components/auth/auth.service";
+import { Member } from "../libs/dto/member/member";
+import * as url from "url";
+import { OnEvent } from "@nestjs/event-emitter";
+import { NotificationService } from "../components/notification/notification.service";
+import {
+  Notifications,
+  Notification,
+} from "../libs/dto/notification/notification";
 
 interface MessagePayload {
   event: string;
@@ -18,20 +29,25 @@ interface InfoPayload {
   memberData: Member;
   action: string;
 }
-@WebSocketGateway({ transports: ['websocket'], secure: false })
+@WebSocketGateway({ transports: ["websocket"], secure: false })
 export class SocketGateway implements OnGatewayInit {
-  private logger: Logger = new Logger('SocketEventsGateway');
+  private logger: Logger = new Logger("SocketEventsGateway");
   private summaryClient: number = 0;
   private clientsAuthMap = new Map<WebSocket, Member>();
   private messagesList: MessagePayload[] = [];
 
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    private notificationService: NotificationService,
+  ) { }
 
   @WebSocketServer()
   server: Server;
 
   public afterInit(server: Server) {
-    this.logger.verbose(`WebSocket Server Initialized. Total:[${this.summaryClient}]`);
+    this.logger.verbose(
+      `WebSocket Server Initialized. Total:[${this.summaryClient}]`,
+    );
   }
 
   private async retrieveAuth(req: any): Promise<Member> {
@@ -48,47 +64,90 @@ export class SocketGateway implements OnGatewayInit {
     this.summaryClient++;
     const authMember = await this.retrieveAuth(req);
     this.clientsAuthMap.set(client, authMember);
-    const clientNick: string = authMember?.memberNick ?? 'Guest';
-    this.logger.verbose(`Connnection [${clientNick}] & Total:[${this.summaryClient}]`);
+    const clientNick: string = authMember?.memberNick ?? "Guest";
+    this.logger.verbose(
+      `Connnection [${clientNick}] & Total:[${this.summaryClient}]`,
+    );
+
+    //TODO: send notif when connected
+    // when connected get notification
+    // send them to the connected client
+    let notifications: Notifications | any = [];
+    if (authMember?._id) {
+      notifications = await this.notificationService.getNotifications(
+        authMember?._id,
+      );
+      client.send(JSON.stringify({ event: "notifications", notifications }));
+    }
 
     const infoMsg: InfoPayload = {
-      event: 'info',
+      event: "info",
       totalClients: this.summaryClient,
       memberData: authMember,
-      action: 'joined',
+      action: "joined",
     };
     this.emitMessage(infoMsg);
-    client.send(JSON.stringify({ event: 'getMessages', list: this.messagesList }));
+    client.send(
+      JSON.stringify({ event: "getMessages", list: this.messagesList }),
+    );
+  }
+
+  //TODO: push notification
+  // when notification event is emitted
+  // handle notification handleNotificationCreation
+  // when its created find the client from the Map
+  // send the notification to that client
+  @OnEvent("notification", { async: true })
+  public pushNotification(receiverId: any) {
+    this.clientsAuthMap.forEach((member: Member, client: WebSocket) => {
+      if (String(receiverId) === String(member._id)) {
+        this.notificationService.getNotifications(receiverId).then((data) => {
+          client.send(
+            JSON.stringify({ event: "notifications", notifications: data }),
+          );
+        });
+      }
+    });
   }
 
   public handleDisconnect(client: WebSocket) {
     this.summaryClient--;
     const authMember = this.clientsAuthMap.get(client);
-    const clientNick: string = authMember?.memberNick ?? 'Guest';
+    const clientNick: string = authMember?.memberNick ?? "Guest";
     this.clientsAuthMap.delete(client);
-    this.logger.verbose(`Disconnection [${clientNick}] & Total:[${this.summaryClient}]`);
+    this.logger.verbose(
+      `Disconnection [${clientNick}] & Total:[${this.summaryClient}]`,
+    );
 
     const infoMsg: InfoPayload = {
-      event: 'info',
+      event: "info",
       totalClients: this.summaryClient,
       memberData: authMember,
-      action: 'left',
+      action: "left",
     };
     this.broadcastMessage(client, infoMsg);
   }
 
-  @SubscribeMessage('message')
+  @SubscribeMessage("message")
   public async handleMessage(client: WebSocket, payload: any): Promise<void> {
     const authMember = this.clientsAuthMap.get(client);
-    const clientNick: string = authMember?.memberNick ?? 'Guest';
-    const newMessage: MessagePayload = { event: 'message', text: payload, memberData: authMember };
+    const clientNick: string = authMember?.memberNick ?? "Guest";
+    const newMessage: MessagePayload = {
+      event: "message",
+      text: payload,
+      memberData: authMember,
+    };
     this.logger.verbose(`NEW MESSAGE [${clientNick}]: ${payload}`);
     this.messagesList.push(newMessage);
-    if (this.messagesList.length > 5) this.messagesList.splice(0, this.messagesList.length - 5);
+    if (this.messagesList.length > 5)
+      this.messagesList.splice(0, this.messagesList.length - 5);
     this.emitMessage(newMessage);
   }
 
-  private broadcastMessage(sender: WebSocket, message: InfoPayload | MessagePayload) {
+  private broadcastMessage(
+    sender: WebSocket,
+    message: InfoPayload | MessagePayload,
+  ) {
     this.server.clients.forEach((client) => {
       if (client !== sender && client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(message));

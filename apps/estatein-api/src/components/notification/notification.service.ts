@@ -9,12 +9,14 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Message } from "../../libs/enums/common.enum";
 import { NotificationInput } from "../../libs/dto/notification/notification.input";
 import { NotificationStatus } from "../../libs/enums/notification.enum";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 @Injectable()
 export class NotificationService {
   constructor(
     @InjectModel("Notification")
     private readonly notificatinoModel: Model<Notification>,
+    private readonly eventEmitter: EventEmitter2,
   ) { }
 
   public async getNotifications(memberId: ObjectId): Promise<Notifications> {
@@ -43,7 +45,8 @@ export class NotificationService {
 
   public async createNotification(input: NotificationInput): Promise<void> {
     try {
-      await this.notificatinoModel.create(input);
+      const newNotif: Notification = await this.notificatinoModel.create(input);
+      this.eventEmitter.emit("notification", newNotif.receiverId);
     } catch (err: any) {
       console.log("Notification Service Error: createNotification", err);
       throw new InternalServerErrorException(Message.CREATE_FAILED);
@@ -54,7 +57,7 @@ export class NotificationService {
     memberId: ObjectId,
     notificationId: ObjectId,
   ): Promise<Notification> {
-    const result = await this.notificatinoModel
+    const result: Notification = await this.notificatinoModel
       .findOneAndUpdate(
         { _id: notificationId, receiverId: memberId },
         { notificationStatus: NotificationStatus.READ },
@@ -63,6 +66,7 @@ export class NotificationService {
       .exec();
 
     if (!result) throw new Error(Message.UPDATE_FAILED);
+    this.eventEmitter.emit("notification", result.receiverId);
 
     return result;
   }
