@@ -69,9 +69,6 @@ export class SocketGateway implements OnGatewayInit {
       `Connnection [${clientNick}] & Total:[${this.summaryClient}]`,
     );
 
-    //TODO: send notif when connected
-    // when connected get notification
-    // send them to the connected client
     let notifications: Notifications | any = [];
     if (authMember?._id) {
       notifications = await this.notificationService.getNotifications(
@@ -92,11 +89,6 @@ export class SocketGateway implements OnGatewayInit {
     );
   }
 
-  //TODO: push notification
-  // when notification event is emitted
-  // handle notification handleNotificationCreation
-  // when its created find the client from the Map
-  // send the notification to that client
   @OnEvent("notification", { async: true })
   public pushNotification(receiverId: any) {
     this.clientsAuthMap.forEach((member: Member, client: WebSocket) => {
