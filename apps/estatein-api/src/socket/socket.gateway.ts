@@ -100,7 +100,7 @@ export class SocketGateway implements OnGatewayInit {
   @OnEvent("notification", { async: true })
   public pushNotification(receiverId: any) {
     this.clientsAuthMap.forEach((member: Member, client: WebSocket) => {
-      if (String(receiverId) === String(member._id)) {
+      if (String(receiverId) === String(member?._id)) {
         this.notificationService.getNotifications(receiverId).then((data) => {
           client.send(
             JSON.stringify({ event: "notifications", notifications: data }),
