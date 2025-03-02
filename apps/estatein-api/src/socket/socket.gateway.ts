@@ -12,10 +12,7 @@ import { Member } from "../libs/dto/member/member";
 import * as url from "url";
 import { OnEvent } from "@nestjs/event-emitter";
 import { NotificationService } from "../components/notification/notification.service";
-import {
-  Notifications,
-  Notification,
-} from "../libs/dto/notification/notification";
+import { Notifications } from "../libs/dto/notification/notification";
 
 interface MessagePayload {
   event: string;
