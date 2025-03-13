@@ -46,7 +46,6 @@ export class MemberService {
 
   public async signup(input: MemberInput): Promise<Member> {
     try {
-      console.log("MEMBER INPUT", input);
       input.memberPassword = await this.authService.hashPassword(
         input.memberPassword,
       );
@@ -233,13 +232,11 @@ export class MemberService {
       likeGroup: LikeGroup.MEMBER,
     };
     const modifier: number = await this.likeService.toggleLike(input);
-
     const result = await this.memberStatsModifier({
       _id: likeRefId,
       targetKey: "memberLikes",
       modifier: modifier,
     });
-
     if (modifier === 1) {
       const notifInput: NotificationInput = {
         notificationGroup: NotificationGroup.MEMBER,
@@ -249,7 +246,6 @@ export class MemberService {
         authorId: memberId,
         receiverId: likeRefId,
       };
-
       await this.notificationService.createNotification(notifInput);
     }
     if (!result)
