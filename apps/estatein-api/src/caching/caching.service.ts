@@ -6,7 +6,7 @@ import { CACHE_TTL } from "../libs/config";
 export class CachingService {
   constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) { }
 
-  public async setCache(key: string, value: any) {
+  public async setCacheData(key: string, value: any) {
     const stringVal = JSON.stringify(value);
     try {
       await this.cacheManager.set(key, stringVal, CACHE_TTL);
@@ -23,5 +23,6 @@ export class CachingService {
     } else {
       console.log("Cache Miss!");
     }
+    return result;
   }
 }

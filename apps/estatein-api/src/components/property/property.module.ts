@@ -9,6 +9,7 @@ import { ViewModule } from "../view/view.module";
 import { MemberModule } from "../member/member.module";
 import { LikeModule } from "../like/like.module";
 import { NotificationModule } from "../notification/notification.module";
+import { CachingModule } from "../../caching/caching.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { NotificationModule } from "../notification/notification.module";
     MemberModule,
     LikeModule,
     NotificationModule,
+    CachingModule,
   ],
   providers: [PropertyResolver, PropertyService],
   exports: [PropertyService],

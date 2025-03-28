@@ -37,6 +37,7 @@ import {
   NotificationGroup,
   NotificationType,
 } from "../../libs/enums/notification.enum";
+import { CachingService } from "../../caching/caching.service";
 
 @Injectable()
 export class PropertyService {
@@ -47,6 +48,7 @@ export class PropertyService {
     private memberService: MemberService,
     private likeService: LikeService,
     private notificationService: NotificationService,
+    private cachingService: CachingService,
   ) { }
 
   public async createProperty(input: PropertyInput): Promise<Property> {
