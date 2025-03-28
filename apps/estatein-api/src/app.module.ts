@@ -10,7 +10,7 @@ import { DatabaseModule } from "./database/database.module";
 import { T } from "./libs/types/common";
 import { SocketModule } from "./socket/socket.module";
 import { EventEmitterModule } from "@nestjs/event-emitter";
-import { CacheModule } from './cache/cache.module';
+import { CachingModule } from './caching/caching.module';
 
 @Module({
   imports: [
@@ -37,7 +37,7 @@ import { CacheModule } from './cache/cache.module';
     ComponentsModule,
     DatabaseModule,
     SocketModule,
-    CacheModule,
+    CachingModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],
