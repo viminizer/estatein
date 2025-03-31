@@ -19,6 +19,7 @@ import {
 import { Direction, Message } from "../../libs/enums/common.enum";
 import { MemberService } from "../member/member.service";
 import {
+  hashCacheKey,
   lookupAuthMemberLiked,
   lookupMember,
   shapeIntoMongoObjectId,
@@ -143,6 +144,12 @@ export class PropertyService {
     memberId: ObjectId,
     input: PropertiesInquiry,
   ): Promise<Properties> {
+    const key = `products:${hashCacheKey(JSON.stringify(input))}`;
+    const cacheResult = await this.cachingService.getCacheData(key);
+    if (cacheResult) {
+      return cacheResult;
+    }
+
     const match: T = { propertyStatus: PropertyStatus.ACTIVE };
     const sort: T = {
       [input?.sort ?? "createdAt"]: input?.direction ?? Direction.DESC,
@@ -168,6 +175,7 @@ export class PropertyService {
       ])
       .exec();
     if (!result) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+    await this.cachingService.setCacheData(key, result[0]);
     return result[0];
   }
 

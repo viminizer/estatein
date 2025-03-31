@@ -17,12 +17,15 @@ export class CachingService {
   }
 
   public async getCacheData(key: string) {
-    const result = this.cacheManager.get(key);
+    console.log("KEY", key);
+    const result = await this.cacheManager.get<string>(key);
+    console.log("RESULT", result);
     if (result) {
       console.log("Cache Hit!");
+      return JSON.parse(result);
     } else {
       console.log("Cache Miss!");
+      return null;
     }
-    return result;
   }
 }

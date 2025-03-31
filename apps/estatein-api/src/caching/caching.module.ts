@@ -14,5 +14,6 @@ import { createKeyv } from "@keyv/redis";
     }),
   ],
   providers: [CachingService],
+  exports: [CachingService],
 })
 export class CachingModule { }
