@@ -10,11 +10,17 @@ import { DatabaseModule } from "./database/database.module";
 import { T } from "./libs/types/common";
 import { SocketModule } from "./socket/socket.module";
 import { EventEmitterModule } from "@nestjs/event-emitter";
-import { CachingModule } from './caching/caching.module';
+import { CacheModule } from "@nestjs/cache-manager";
+import { CACHE_TTL } from "./libs/config";
+import { createKeyv } from "@keyv/redis";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    CacheModule.register({
+      isGlobal: true,
+      ttl: CACHE_TTL,
+    }),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       playground: true,
@@ -37,7 +43,6 @@ import { CachingModule } from './caching/caching.module';
     ComponentsModule,
     DatabaseModule,
     SocketModule,
-    CachingModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],
