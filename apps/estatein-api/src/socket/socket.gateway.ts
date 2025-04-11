@@ -41,7 +41,7 @@ export class SocketGateway implements OnGatewayInit {
   @WebSocketServer()
   server: Server;
 
-  public afterInit(server: Server) {
+  public afterInit(_server: Server) {
     this.logger.verbose(
       `WebSocket Server Initialized. Total:[${this.summaryClient}]`,
     );
@@ -88,12 +88,14 @@ export class SocketGateway implements OnGatewayInit {
 
   @OnEvent("notification", { async: true })
   public pushNotification(receiverId: any) {
+    console.log("pushNotification");
     this.clientsAuthMap.forEach((member: Member, client: WebSocket) => {
       if (String(receiverId) === String(member?._id)) {
         this.notificationService.getNotifications(receiverId).then((data) => {
           client.send(
             JSON.stringify({ event: "notifications", notifications: data }),
           );
+          console.log("Notifications event has been emitted!");
         });
       }
     });

@@ -45,6 +45,7 @@ export class NotificationService {
 
   public async createNotification(input: NotificationInput): Promise<void> {
     try {
+      console.log("createNotification");
       const newNotif: Notification = await this.notificatinoModel.create(input);
       this.eventEmitter.emit("notification", newNotif.receiverId);
     } catch (err: any) {
