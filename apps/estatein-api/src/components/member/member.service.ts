@@ -118,7 +118,6 @@ export class MemberService {
           .exec();
         targetMember.memberViews++;
       }
-
       const likeInput = {
         memberId,
         likeRefId: targetId,

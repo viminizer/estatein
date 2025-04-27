@@ -26,6 +26,7 @@ interface InfoPayload {
   memberData: Member;
   action: string;
 }
+
 @WebSocketGateway({ transports: ["websocket"], secure: false })
 export class SocketGateway implements OnGatewayInit {
   private logger: Logger = new Logger("SocketEventsGateway");
@@ -65,7 +66,6 @@ export class SocketGateway implements OnGatewayInit {
     this.logger.verbose(
       `Connnection [${clientNick}] & Total:[${this.summaryClient}]`,
     );
-
     let notifications: Notifications | any = [];
     if (authMember?._id) {
       notifications = await this.notificationService.getNotifications(
@@ -73,7 +73,6 @@ export class SocketGateway implements OnGatewayInit {
       );
       client.send(JSON.stringify({ event: "notifications", notifications }));
     }
-
     const infoMsg: InfoPayload = {
       event: "info",
       totalClients: this.summaryClient,
@@ -109,7 +108,6 @@ export class SocketGateway implements OnGatewayInit {
     this.logger.verbose(
       `Disconnection [${clientNick}] & Total:[${this.summaryClient}]`,
     );
-
     const infoMsg: InfoPayload = {
       event: "info",
       totalClients: this.summaryClient,
